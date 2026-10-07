@@ -2,7 +2,7 @@
 
 A fictional bank card application built with **Java 21**, **Jakarta EE 10**, and **WildFly**. It is a learning and portfolio project inspired by card-system work at Finexus. Nothing here is real bank software.
 
-Full plan and context: see `CARD-SYSTEM-SPEC.md` in the portfolio repo (`Portfolio/docs/CARD-SYSTEM-SPEC.md`).
+Full plan and context: **`docs/CARD-SYSTEM-SPEC.md`** in this repo. For AI assistants, read **`AGENTS.md`** first.
 
 ## Phase 0 (current)
 
@@ -51,12 +51,18 @@ Management console (optional): http://localhost:9990
 
 ## Deploy this app
 
-With WildFly running, from the project folder:
+With WildFly running:
+
+```bash
+./scripts/dev.sh deploy
+```
+
+Or manually:
 
 ```bash
 export JAVA_HOME=$(/usr/libexec/java_home -v 21)
 export JBOSS_HOME=/opt/homebrew/opt/wildfly-as/libexec
-mvn wildfly:deploy
+mvn clean package wildfly:deploy
 ```
 
 Open:

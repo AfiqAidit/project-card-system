@@ -24,3 +24,17 @@ export PATH="$PATH:$JBOSS_HOME/bin"
 ```
 
 Open a **new** terminal after editing `.zshrc`.
+
+## Dev script
+
+From the project root:
+
+```bash
+./scripts/dev.sh package   # build WAR only
+./scripts/dev.sh deploy    # build + deploy (WildFly must be running)
+./scripts/dev.sh redeploy  # after code changes
+./scripts/dev.sh undeploy  # remove app, WildFly keeps running
+./scripts/dev.sh urls
+```
+
+`deploy` runs `mvn clean package` then `wildfly:deploy`. It does not start WildFly.
