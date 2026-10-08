@@ -1,5 +1,7 @@
 package com.demobank.domain;
 
+import java.util.UUID;
+
 public final class CreditCard extends Card {
 
   private final Money creditLimit;
@@ -9,6 +11,17 @@ public final class CreditCard extends Card {
     super(number);
     this.creditLimit = creditLimit;
     this.amountUsed = Money.zero();
+  }
+
+  public CreditCard(CardNumber number, Money creditLimit, UUID existingId) {
+    super(number, existingId);
+    this.creditLimit = creditLimit;
+    this.amountUsed = Money.zero();
+  }
+
+  public void restoreState(CardStatus status, Money used) {
+    restoreStatus(status);
+    this.amountUsed = used;
   }
 
   @Override

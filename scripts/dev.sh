@@ -35,9 +35,9 @@ Usage: ./scripts/dev.sh <command>
   undeploy   remove app from WildFly
   urls       print local URLs
 
-Start WildFly (separate terminal):
-  $JBOSS_HOME/bin/standalone.sh
-  or: brew services start wildfly-as
+Start WildFly on Java 21 (separate terminal):
+  ./scripts/start-wildfly.sh
+  Do not use brew services start wildfly-as (it uses JDK 27 and JPA deploy fails).
 EOF
 }
 
@@ -71,6 +71,7 @@ case "$cmd" in
   urls)
     echo "http://localhost:8080/card-system/"
     echo "http://localhost:8080/card-system/hello"
+    echo "http://localhost:8080/card-system/teller"
     ;;
   ""|-h|--help)
     usage

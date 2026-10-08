@@ -14,9 +14,18 @@ public abstract class Card {
   private CardStatus status;
 
   protected Card(CardNumber number) {
-    this.id = UUID.randomUUID();
+    this(number, null);
+  }
+
+  protected Card(CardNumber number, UUID existingId) {
+    this.id = existingId != null ? existingId : UUID.randomUUID();
     this.number = Objects.requireNonNull(number);
     this.status = CardStatus.ACTIVE;
+  }
+
+  /** Reload status from the database (persistence layer only). */
+  protected void restoreStatus(CardStatus newStatus) {
+    this.status = newStatus;
   }
 
   public UUID id() {

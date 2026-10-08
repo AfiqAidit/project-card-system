@@ -1,0 +1,347 @@
+/* Teller page: trace panel + guided tour (loads after demobank.css). */
+
+.teller-page .db-shell {
+  max-width: var(--db-max-teller);
+}
+
+.teller-tour-anchor {
+  height: 0;
+}
+
+.teller-workspace {
+  display: grid;
+  gap: 1rem;
+  align-items: start;
+}
+
+.teller-workspace--trace-on {
+  grid-template-columns: minmax(0, 1fr) min(20rem, 32vw);
+}
+
+.teller-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.teller-trace-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: sticky;
+  top: 1rem;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+}
+
+.teller-trace-aside[hidden] {
+  display: none !important;
+}
+
+.teller-trace-aside .panel {
+  margin-bottom: 0;
+}
+
+.teller-trace-aside .trace-list {
+  font-size: 0.84rem;
+}
+
+@media (max-width: 900px) {
+  .teller-workspace--trace-on {
+    grid-template-columns: 1fr;
+  }
+
+  .teller-trace-aside {
+    position: static;
+    max-height: none;
+  }
+}
+
+.trace-panel {
+  background: var(--db-surface-muted);
+  border-color: var(--db-border-strong);
+}
+
+.trace-intro {
+  margin: 0 0 0.85rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.trace-keywords-panel h2 {
+  margin-bottom: 0.35rem;
+}
+
+.trace-keywords-intro {
+  margin: 0 0 0.75rem;
+  font-size: 0.88rem;
+}
+
+.trace-glossary-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.trace-glossary-list li {
+  margin-bottom: 0.55rem;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--db-text);
+}
+
+.trace-glossary-list li:last-child {
+  margin-bottom: 0;
+}
+
+.trace-glossary-list code {
+  font-size: 0.85em;
+}
+
+.trace-glossary-hint {
+  color: var(--db-muted);
+  font-size: 0.92em;
+}
+
+.trace-empty {
+  margin: 0;
+}
+
+.trace-list {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.trace-list li {
+  margin-bottom: 0.75rem;
+}
+
+.trace-layer {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  margin-right: 0.35rem;
+  vertical-align: baseline;
+}
+
+.trace-layer-Browser {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.trace-layer-Servlet {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.trace-layer-EJB {
+  background: #ffedd5;
+  color: #9a3412;
+}
+
+.trace-layer-Domain {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.trace-layer-JPA {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.trace-detail {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.85rem;
+  color: var(--db-muted);
+}
+
+/* Guided tour overlay */
+body.tour-active {
+  position: fixed;
+  width: 100%;
+  overflow: hidden;
+}
+
+.tour-root {
+  position: fixed;
+  inset: 0;
+  /* Above any highlighted page content (e.g. flash message) */
+  z-index: 100000;
+  pointer-events: none;
+}
+
+.tour-root[hidden] {
+  display: none !important;
+}
+
+.tour-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(15, 23, 42, 0.28);
+  pointer-events: none;
+}
+
+.tour-spotlight {
+  position: fixed;
+  z-index: 2;
+  border-radius: var(--db-radius-sm);
+  box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.28);
+  pointer-events: none;
+  transition: top 0.2s ease, left 0.2s ease, width 0.2s ease, height 0.2s ease;
+}
+
+.tour-spotlight.is-off {
+  opacity: 0;
+}
+
+/* Stack inside overlay: 1 = dim, 2 = spotlight, 3 = tip bar (always on top) */
+.tour-card {
+  position: fixed;
+  z-index: 3;
+  isolation: isolate;
+  width: min(20rem, calc(100vw - 2rem));
+  margin: 0;
+  padding: 1rem 1.1rem 0.85rem;
+  background: #f0f9ff;
+  color: #0c4a6e;
+  border: 1px solid #bae6fd;
+  border-radius: var(--db-radius-sm);
+  box-shadow: 0 10px 30px rgba(14, 116, 144, 0.12);
+  pointer-events: auto;
+  visibility: hidden;
+}
+
+.tour-card.is-visible {
+  visibility: visible;
+}
+
+.tour-card.is-top-dock {
+  width: min(40rem, calc(100vw - 2rem));
+  top: 0.75rem !important;
+  left: 50% !important;
+  transform: translateX(-50%);
+  /* Stays here while the page is scroll-locked under the overlay */
+}
+
+.tour-card.is-center .tour-arrow,
+.tour-card.is-top-dock .tour-arrow {
+  display: none;
+}
+
+.tour-kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #0369a1;
+}
+
+.tour-card-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #0c4a6e;
+}
+
+.tour-card-body {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: #334155;
+}
+
+.tour-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.tour-root .tour-skip,
+.tour-root .tour-next,
+.tour-root .tour-muted-link {
+  display: inline-block;
+  margin: 0;
+  font-family: inherit;
+  font-size: 0.88rem;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.tour-root .tour-skip {
+  padding: 0;
+  border: none;
+  background: none;
+  color: #0369a1;
+  text-decoration: underline;
+}
+
+.tour-root .tour-next {
+  padding: 0.45rem 1rem;
+  border: none;
+  border-radius: var(--db-radius-sm);
+  background: var(--db-brand);
+  color: #fff;
+  font-weight: 600;
+}
+
+.tour-root .tour-next:hover {
+  background: var(--db-brand-hover);
+}
+
+.tour-root .tour-muted-link {
+  display: block;
+  width: 100%;
+  margin-top: 0.65rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #64748b;
+  font-size: 0.78rem;
+  text-align: left;
+  text-decoration: underline;
+}
+
+.tour-arrow {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #f0f9ff;
+  border-left: 1px solid #bae6fd;
+  border-top: 1px solid #bae6fd;
+  transform: rotate(45deg);
+}
+
+.tour-card[data-placement="bottom"] .tour-arrow {
+  top: -6px;
+}
+
+.tour-card[data-placement="top"] .tour-arrow {
+  bottom: -6px;
+}
+
+.tour-card[data-placement="left"] .tour-arrow {
+  left: -6px;
+  top: 1.5rem;
+}
+
+.tour-card[data-placement="right"] .tour-arrow {
+  right: -6px;
+  top: 1.5rem;
+}
+
+/* Highlight only: must not sit above .tour-root (tip bar lives there) */
+.tour-target-focus {
+  position: relative;
+  box-shadow: 0 0 0 3px #38bdf8;
+  border-radius: var(--db-radius-sm);
+}

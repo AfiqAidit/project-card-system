@@ -25,6 +25,22 @@ export PATH="$PATH:$JBOSS_HOME/bin"
 
 Open a **new** terminal after editing `.zshrc`.
 
+## WildFly must use Java 21 (not JDK 27+)
+
+Homebrew may default to a newer JDK. If WildFly starts on JDK 27, JPA deploy can fail with ByteBuddy errors and `/teller` stays 404 while an old WAR still serves `/hello`.
+
+Homebrew's `standalone.sh` **hardcodes** `/opt/homebrew/opt/openjdk/bin/java` (often JDK 27), so `JAVA_HOME` alone is not enough. Use the project script:
+
+```bash
+./scripts/start-wildfly.sh
+```
+
+That sets `JAVA` and `JAVA_HOME` to Java 21, then runs WildFly.
+
+If WildFly was already running on the wrong JDK, stop it (Ctrl+C in that terminal, or `brew services stop wildfly-as`), then run `./scripts/start-wildfly.sh` again.
+
+Check the running server log: `grep java.version $JBOSS_HOME/standalone/log/server.log | tail -1` should show `21`, not `27`.
+
 ## Dev script
 
 From the project root:

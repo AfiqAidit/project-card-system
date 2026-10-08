@@ -5,8 +5,9 @@ Handoff for any AI model or person helping with this project. It contains the fu
 ## Current status (update as you go)
 
 - **Phase 0:** Maven and WildFly on Mac, hello servlet deployed at `/card-system/`.
-- **Phase 1 (done):** Domain model in `com.demobank.domain` and JUnit tests (`mvn test`). See `docs/DESIGN.md`.
-- **Next:** Phase 2 teller screen (Servlet + JSP): issue card, purchase, approve/decline. Then JPA persistence.
+- **Phase 1 (done):** Domain model and unit tests. See `docs/DESIGN.md`.
+- **Phase 2 (done):** Teller servlet + JSP, JPA + H2 file DB, trace panel + processing tips on teller. See `docs/DATABASE.md`.
+- **Next:** Phase 3 — dedicated authorization EJB, concurrency demo, nightly data reset timer.
 
 ## In one paragraph
 

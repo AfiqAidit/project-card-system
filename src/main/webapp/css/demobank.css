@@ -1,0 +1,326 @@
+/* Demo Bank shared UI (JSP pages). No framework: plain CSS variables + components. */
+
+:root {
+  color-scheme: light;
+  --db-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --db-bg: #eef2f6;
+  --db-surface: #ffffff;
+  --db-surface-muted: #f8fafc;
+  --db-border: #d8e0ea;
+  --db-border-strong: #c2cedc;
+  --db-text: #0f172a;
+  --db-muted: #64748b;
+  --db-brand: #0f4c81;
+  --db-brand-hover: #0a3d68;
+  --db-accent: #0ea5e9;
+  --db-success-bg: #ecfdf5;
+  --db-success-border: #6ee7b7;
+  --db-success-text: #065f46;
+  --db-danger-bg: #fef2f2;
+  --db-danger-border: #fca5a5;
+  --db-danger-text: #991b1b;
+  --db-radius: 0.75rem;
+  --db-radius-sm: 0.5rem;
+  --db-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.06);
+  --db-max: 56rem;
+  --db-max-teller: 76rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--db-font);
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--db-text);
+  background: var(--db-bg);
+}
+
+.db-shell {
+  max-width: var(--db-max);
+  margin: 0 auto;
+  padding: 1.25rem 1rem 2.5rem;
+}
+
+.db-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.db-kicker {
+  margin: 0 0 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--db-brand);
+}
+
+.db-topbar h1 {
+  margin: 0 0 0.35rem;
+  font-size: clamp(1.5rem, 3vw, 1.85rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.db-lead {
+  margin: 0;
+  max-width: 36rem;
+}
+
+.muted,
+.db-muted {
+  color: var(--db-muted);
+  font-size: 0.92rem;
+}
+
+.db-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--db-border);
+  border-radius: var(--db-radius-sm);
+  background: var(--db-surface);
+  color: var(--db-brand);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--db-shadow);
+}
+
+.db-link:hover {
+  border-color: var(--db-border-strong);
+  background: var(--db-surface-muted);
+}
+
+.db-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.db-flash {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border-radius: var(--db-radius-sm);
+  border: 1px solid var(--db-success-border);
+  background: var(--db-success-bg);
+  color: var(--db-success-text);
+  font-weight: 500;
+}
+
+.db-flash.is-error {
+  border-color: var(--db-danger-border);
+  background: var(--db-danger-bg);
+  color: var(--db-danger-text);
+}
+
+.db-prefs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  padding: 0.85rem 1rem;
+  background: var(--db-surface);
+  border: 1px solid var(--db-border);
+  border-radius: var(--db-radius);
+  box-shadow: var(--db-shadow);
+}
+
+.db-prefs-title {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--db-muted);
+}
+
+.db-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  font-size: 0.92rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.db-check input {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--db-brand);
+}
+
+.panel {
+  background: var(--db-surface);
+  border: 1px solid var(--db-border);
+  border-radius: var(--db-radius);
+  padding: 1.15rem 1.25rem;
+  box-shadow: var(--db-shadow);
+}
+
+.panel h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.panel > .muted {
+  margin: 0 0 0.75rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+}
+
+.db-form label {
+  display: block;
+  margin: 0.65rem 0 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--db-text);
+}
+
+.db-field {
+  display: block;
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--db-border-strong);
+  border-radius: var(--db-radius-sm);
+  background: var(--db-surface);
+  font: inherit;
+  color: var(--db-text);
+}
+
+.db-field:focus {
+  outline: 2px solid rgba(14, 165, 233, 0.35);
+  border-color: var(--db-accent);
+}
+
+.db-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid transparent;
+  border-radius: var(--db-radius-sm);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.db-btn-primary {
+  background: var(--db-brand);
+  color: #fff;
+}
+
+.db-btn-primary:hover {
+  background: var(--db-brand-hover);
+}
+
+.db-table-wrap {
+  overflow-x: auto;
+  margin-top: 0.5rem;
+}
+
+.db-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.db-table th {
+  padding: 0.55rem 0.65rem;
+  border-bottom: 2px solid var(--db-border);
+  text-align: left;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--db-muted);
+  background: var(--db-surface-muted);
+}
+
+.db-table td {
+  padding: 0.6rem 0.65rem;
+  border-bottom: 1px solid var(--db-border);
+}
+
+.db-table tbody tr:hover {
+  background: var(--db-surface-muted);
+}
+
+.db-badge {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.db-badge-active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.db-badge-debit {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.db-badge-credit {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.db-home {
+  list-style: none;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.db-home a {
+  display: block;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--db-border);
+  border-radius: var(--db-radius-sm);
+  background: var(--db-surface);
+  color: var(--db-brand);
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--db-shadow);
+}
+
+.db-home a:hover {
+  border-color: var(--db-border-strong);
+}
+
+.db-footnote {
+  margin: 1.5rem 0 0;
+  font-size: 0.82rem;
+  color: var(--db-muted);
+}
+
+code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.88em;
+}

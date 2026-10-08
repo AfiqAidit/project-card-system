@@ -4,10 +4,11 @@ A fictional bank card application built with **Java 21**, **Jakarta EE 10**, and
 
 Full plan and context: **`docs/CARD-SYSTEM-SPEC.md`** in this repo. For AI assistants, read **`AGENTS.md`** first.
 
-## Phase 0 (current)
+## Phase 2 (current)
 
-- Maven builds a `.war` file
-- One servlet at `/hello` and a JSP home page
+- **Teller desk:** http://localhost:8080/card-system/teller (issue debit/credit, test purchase)
+- **Database:** H2 file DB via WildFly datasource (see `docs/DATABASE.md`)
+- Phase 0 hello servlet still at `/hello`
 
 ## Prerequisites on your Mac
 
@@ -34,9 +35,10 @@ The WAR is `target/card-system.war`.
 
 ## Run WildFly
 
-Start the server (first start can take a minute):
+Start the server (first start can take a minute). Use **Java 21** for the JVM that runs WildFly (see `docs/SETUP-MAC.md` if deploy fails with ByteBuddy):
 
 ```bash
+export JAVA_HOME=$(/usr/libexec/java_home -v 21)
 export JBOSS_HOME=/opt/homebrew/opt/wildfly-as/libexec
 $JBOSS_HOME/bin/standalone.sh
 ```
