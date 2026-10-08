@@ -4,8 +4,9 @@ Handoff for any AI model or person helping with this project. It contains the fu
 
 ## Current status (update as you go)
 
-- **Phase 0 (partial):** Maven and WildFly installed via Homebrew. Maven project with `HelloServlet` and `index.jsp` builds and deploys to `http://localhost:8080/card-system/`. Docker and Oracle not set up yet. GitHub remote not created yet.
-- **Next:** Phase 1 domain model (`Card`, `DebitCard`, `CreditCard`, `Money`, `CardNumber`) and unit tests.
+- **Phase 0:** Maven and WildFly on Mac, hello servlet deployed at `/card-system/`.
+- **Phase 1 (done):** Domain model in `com.demobank.domain` and JUnit tests (`mvn test`). See `docs/DESIGN.md`.
+- **Next:** Phase 2 teller screen (Servlet + JSP): issue card, purchase, approve/decline. Then JPA persistence.
 
 ## In one paragraph
 
