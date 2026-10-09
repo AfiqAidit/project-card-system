@@ -35,10 +35,9 @@ The WAR is `target/card-system.war`.
 
 ## Run WildFly
 
-Start the server (first start can take a minute). Use **Java 21** for the JVM that runs WildFly (see `docs/SETUP-MAC.md` if deploy fails with ByteBuddy):
+Start the server (first start can take a minute):
 
 ```bash
-export JAVA_HOME=$(/usr/libexec/java_home -v 21)
 export JBOSS_HOME=/opt/homebrew/opt/wildfly-as/libexec
 $JBOSS_HOME/bin/standalone.sh
 ```

@@ -1,6 +1,5 @@
 package com.demobank.service;
 
-import com.demobank.domain.AuthorizationResult;
 import com.demobank.domain.Card;
 import com.demobank.domain.CardNumber;
 import com.demobank.domain.CreditCard;
@@ -9,18 +8,16 @@ import com.demobank.domain.Money;
 import com.demobank.persistence.CardEntity;
 import com.demobank.persistence.CardKind;
 import com.demobank.persistence.CardMapper;
+import com.demobank.persistence.JpaSupport;
 import com.demobank.trace.RequestTrace;
 import com.demobank.web.CardSummary;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionManagement;
 import jakarta.ejb.TransactionManagementType;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceUnit;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
-import java.util.function.Function;
 
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
@@ -34,7 +31,8 @@ public class CardService {
         "EJB",
         "CardService.issueDebit()",
         "@Stateless bean · opening balance RM " + openingBalance);
-    return inTransaction(
+    return JpaSupport.inTransaction(
+        emf,
         em -> {
           CardNumber number = nextDemoNumber();
           DebitCard card = new DebitCard(number, Money.of(openingBalance));
@@ -58,7 +56,8 @@ public class CardService {
         "EJB",
         "CardService.issueCredit()",
         "@Stateless bean · credit limit RM " + limit);
-    return inTransaction(
+    return JpaSupport.inTransaction(
+        emf,
         em -> {
           CardNumber number = nextDemoNumber();
           CreditCard card = new CreditCard(number, Money.of(limit));
@@ -78,36 +77,10 @@ public class CardService {
         });
   }
 
-  public AuthorizationResult authorize(UUID cardId, BigDecimal amount) {
-    RequestTrace.add(
-        "EJB",
-        "CardService.authorize()",
-        "Card id " + cardId + " · purchase RM " + amount);
-    return inTransaction(
-        em -> {
-          CardEntity entity = em.find(CardEntity.class, cardId);
-          if (entity == null) {
-            RequestTrace.add("Domain", "Card not found", "No row for that id");
-            return AuthorizationResult.declined(null, "Card not found");
-          }
-          Card card = CardMapper.toDomain(entity);
-          RequestTrace.add(
-              "Domain",
-              card.getClass().getSimpleName() + ".authorize()",
-              "Checks status, then balance/limit rules in Java (not SQL)");
-          AuthorizationResult result = card.authorize(Money.of(amount));
-          CardMapper.applyDomainState(entity, card);
-          RequestTrace.add(
-              "JPA",
-              "UPDATE cards",
-              result.success() ? "Approved · balance/limit saved" : "Declined · no spend applied");
-          return result;
-        });
-  }
-
   public List<CardSummary> listCards() {
     RequestTrace.add("EJB", "CardService.listCards()", "Load all cards for the table");
-    return inTransaction(
+    return JpaSupport.inTransaction(
+        emf,
         em -> {
           List<CardEntity> rows =
               em.createQuery("select c from CardEntity c order by c.cardNumberDigits", CardEntity.class)
@@ -120,25 +93,11 @@ public class CardService {
         });
   }
 
-  private <T> T inTransaction(Function<EntityManager, T> work) {
-    EntityManager em = emf.createEntityManager();
-    var tx = em.getTransaction();
-    RequestTrace.add("JPA", "Begin transaction", "EntityManager (RESOURCE_LOCAL)");
-    tx.begin();
-    try {
-      T result = work.apply(em);
-      tx.commit();
-      RequestTrace.add("JPA", "Commit", "Changes written to the database");
-      return result;
-    } catch (RuntimeException ex) {
-      if (tx.isActive()) {
-        tx.rollback();
-        RequestTrace.add("JPA", "Rollback", ex.getMessage());
-      }
-      throw ex;
-    } finally {
-      em.close();
-    }
+  /** Used by the nightly EJB timer; not traced. */
+  public int deleteAllCards() {
+    return JpaSupport.inTransaction(
+        emf,
+        em -> em.createQuery("delete from CardEntity").executeUpdate());
   }
 
   private static CardEntity newEntity(Card card, CardKind kind) {

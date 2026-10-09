@@ -11,7 +11,7 @@
       placement: "top-dock",
       title: "Processing tips",
       body:
-        "These tips describe what just happened: frontend (browser) and backend (WildFly, EJB, database)."
+        "Short tips after you use the teller: forms in the browser, then WildFly runs the request. Turn on What happened for the step list."
     },
     {
       id: "frontend-post",

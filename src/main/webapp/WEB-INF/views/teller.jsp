@@ -7,8 +7,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Teller · Demo Bank</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/demobank.css?v=15">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/teller.css?v=15">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/demobank.css?v=16">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/teller.css?v=16">
 </head>
 <body class="teller-page"<c:if test="${not empty tourAfterAction}"> data-tour-after-action="${tourAfterAction}"</c:if>>
   <div class="db-shell">
@@ -18,7 +18,10 @@
         <h1>Teller desk</h1>
         <p class="db-lead muted">Fictional cards (999 prefix). You play the teller: open cards and simulate shop payments.</p>
       </div>
-      <a class="db-link" href="${pageContext.request.contextPath}/">Home</a>
+      <div class="db-topbar-links">
+        <a class="db-link" href="${pageContext.request.contextPath}/concurrency">Concurrency lab</a>
+        <a class="db-link" href="${pageContext.request.contextPath}/">Home</a>
+      </div>
     </header>
 
     <div id="tellerTourAnchor" class="teller-tour-anchor" aria-hidden="true"></div>
@@ -157,11 +160,11 @@
             </li>
             <li>
               <span class="trace-layer trace-layer-Domain">Domain</span>
-              Represent business objects and concepts <span class="trace-glossary-hint">(logic)</span>
+              Represent business objects and concepts <span class="trace-glossary-hint">(DebitCard, CreditCard)</span>
             </li>
             <li>
               <span class="trace-layer trace-layer-JPA">JPA</span>
-              Manage Java objects and database data <span class="trace-glossary-hint">(storage)</span>
+              Manage Java objects and database data <span class="trace-glossary-hint">(CardEntity in H2)</span>
             </li>
           </ul>
         </section>
@@ -185,7 +188,7 @@
     </div>
   </div>
 
-  <script src="${pageContext.request.contextPath}/js/teller-tour.js?v=15"></script>
+  <script src="${pageContext.request.contextPath}/js/teller-tour.js?v=16"></script>
   <script>
     (function () {
       var key = "demobank.showTrace";

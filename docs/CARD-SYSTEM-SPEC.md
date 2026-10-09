@@ -7,7 +7,8 @@ Handoff for any AI model or person helping with this project. It contains the fu
 - **Phase 0:** Maven and WildFly on Mac, hello servlet deployed at `/card-system/`.
 - **Phase 1 (done):** Domain model and unit tests. See `docs/DESIGN.md`.
 - **Phase 2 (done):** Teller servlet + JSP, JPA + H2 file DB, trace panel + processing tips on teller. See `docs/DATABASE.md`.
-- **Next:** Phase 3 — dedicated authorization EJB, concurrency demo, nightly data reset timer.
+- **Phase 3 (done for portfolio):** `AuthorizationService`, concurrency lab, `@Version`, nightly reset timer, trace on lab result.
+- **Next (when rested):** Phase 4 staff login + JSF back office (freeze/search cards).
 
 ## In one paragraph
 

@@ -7,6 +7,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -37,6 +38,9 @@ public class CardEntity {
 
   @Column(precision = 19, scale = 2)
   private BigDecimal creditUsed;
+
+  @Version
+  private long version;
 
   public UUID getId() {
     return id;

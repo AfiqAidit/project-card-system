@@ -1,6 +1,7 @@
 package com.demobank.web;
 
 import com.demobank.domain.AuthorizationResult;
+import com.demobank.service.AuthorizationService;
 import com.demobank.service.CardService;
 import com.demobank.trace.RequestTrace;
 import jakarta.ejb.EJB;
@@ -18,6 +19,9 @@ public class TellerServlet extends HttpServlet {
 
   @EJB
   private CardService cardService;
+
+  @EJB
+  private AuthorizationService authorizationService;
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -48,7 +52,7 @@ public class TellerServlet extends HttpServlet {
     RequestTrace.add(
         "Servlet",
         "TellerServlet.doPost()",
-        "Reads action and amount, then calls CardService (EJB)");
+        "Issue card → CardService · purchase → AuthorizationService");
     try {
       if ("issueDebit".equals(action)) {
         BigDecimal balance = new BigDecimal(req.getParameter("openingBalance"));
@@ -63,7 +67,7 @@ public class TellerServlet extends HttpServlet {
       } else if ("purchase".equals(action)) {
         UUID cardId = UUID.fromString(req.getParameter("cardId"));
         BigDecimal amount = new BigDecimal(req.getParameter("amount"));
-        AuthorizationResult result = cardService.authorize(cardId, amount);
+        AuthorizationResult result = authorizationService.authorize(cardId, amount);
         if (result.success()) {
           req.setAttribute("flash", "Approved: " + result.message());
         } else {

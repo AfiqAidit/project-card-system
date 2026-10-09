@@ -31,6 +31,13 @@ You do **not** configure a connection in Eclipse for this to work. The URL is in
 
 We **removed** `demobank-ds.xml` because WildFly failed to register the JDBC driver from the WAR (`jboss.jdbc-driver.demobank-h2`). The app now uses **RESOURCE_LOCAL** JPA with the H2 jar inside the WAR. That is simpler for learning; we can move to a WildFly **JTA + Oracle** datasource in a later phase.
 
+## Schema changes (e.g. new `version` column)
+
+If you see **Column "VERSION" not found** after a code update:
+
+1. `./scripts/reset-demobank-db.sh` then `./scripts/dev.sh redeploy` (cleanest), or
+2. Redeploy only — the app tries to add `version` on startup and before each DB call.
+
 ## Try it
 
 1. Start WildFly.

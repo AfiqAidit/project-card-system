@@ -19,3 +19,7 @@ Fictional Demo Bank cards only. Prefix **999**, Luhn-valid numbers.
 - `CardNumber`: validation, masking for display.
 
 JPA entities and database persistence come in Phase 2 (teller screen).
+
+## Web UI (all pages)
+
+Use shared **Demo Bank** chrome: `css/demobank.css` plus `css/teller.css` for layout/panels. Top bar: `db-kicker`, `db-topbar`, `db-topbar-links`, `panel`, `db-form`, `db-flash`. New JSP screens should match teller and concurrency lab, not one-off styles.

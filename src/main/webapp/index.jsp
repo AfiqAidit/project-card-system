@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Demo Bank</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/demobank.css?v=5">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/demobank.css?v=16">
 </head>
 <body>
   <div class="db-shell">
@@ -23,6 +23,7 @@
         <p class="muted">Start with the teller desk to issue cards and run a test purchase.</p>
         <ul class="db-home">
           <li><a href="${pageContext.request.contextPath}/teller">Teller desk</a></li>
+          <li><a href="${pageContext.request.contextPath}/concurrency">Concurrency lab (Phase 3)</a></li>
           <li><a href="${pageContext.request.contextPath}/hello">Hello servlet (Phase 0)</a></li>
         </ul>
       </section>

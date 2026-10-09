@@ -56,6 +56,95 @@ body {
   margin-bottom: 1.25rem;
 }
 
+.db-topbar-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.db-plain-list {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+
+.db-plain-list li {
+  margin-bottom: 0.5rem;
+}
+
+.db-result-note {
+  margin: 0 0 1rem;
+  max-width: 42rem;
+}
+
+.db-btn-secondary {
+  font-weight: 500;
+  background: var(--db-surface);
+  border-color: var(--db-border-strong);
+  color: var(--db-text);
+}
+
+.db-btn-secondary:hover {
+  background: var(--db-surface-muted);
+}
+
+.db-btn-safe {
+  width: 100%;
+  margin-top: 0.75rem;
+  background: var(--db-brand);
+  color: #fff;
+}
+
+.db-btn-safe:hover {
+  background: var(--db-brand-hover);
+}
+
+.db-btn-unsafe {
+  width: 100%;
+  margin-top: 0.75rem;
+  background: var(--db-surface);
+  color: #9a3412;
+  border: 1px solid #fdba74;
+}
+
+.db-btn-unsafe:hover {
+  background: #fff7ed;
+}
+
+.concurrency-run-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  margin-top: 1rem;
+}
+
+.concurrency-run-card h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+}
+
+.concurrency-run-card .run-lead {
+  margin: 0 0 0.5rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.result-badge {
+  display: inline-block;
+  margin-left: 0.35rem;
+  vertical-align: middle;
+}
+
+.result-badge-safe {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.result-badge-unsafe {
+  background: #ffedd5;
+  color: #9a3412;
+}
+
 .db-kicker {
   margin: 0 0 0.25rem;
   font-size: 0.75rem;
@@ -312,6 +401,60 @@ body {
 
 .db-home a:hover {
   border-color: var(--db-border-strong);
+}
+
+.db-stats {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.75rem;
+}
+
+.db-stats li {
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--db-border);
+  border-radius: var(--db-radius-sm);
+  background: var(--db-surface-muted);
+}
+
+.db-stats span {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--db-muted);
+}
+
+.db-bars {
+  display: flex;
+  height: 0.5rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--db-border);
+  margin-bottom: 0.75rem;
+}
+
+.db-bar {
+  height: 100%;
+}
+
+.db-bar-ok {
+  background: #22c55e;
+}
+
+.db-bar-bad {
+  background: #f97316;
+}
+
+.db-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.db-btn-primary {
+  font-weight: 600;
 }
 
 .db-footnote {
