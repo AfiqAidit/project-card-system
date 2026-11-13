@@ -6,8 +6,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Concurrency lab · Demo Bank</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/demobank.css?v=20">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/teller.css?v=20">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/demobank.css?v=22">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/teller.css?v=22">
 </head>
 <body class="teller-page">
   <div class="db-shell">
@@ -15,12 +15,14 @@
       <div>
         <p class="db-kicker">Demo Bank</p>
         <h1>Concurrency lab</h1>
-        <p class="db-lead muted">Many payments on one debit card at the same time — safe vs unsafe code.</p>
+        <p class="db-lead muted">Many payments on one debit card at the same time. Safe code next to unsafe code.</p>
       </div>
-      <div class="db-topbar-links">
-        <a class="db-link" href="${pageContext.request.contextPath}/teller">Teller desk</a>
-        <a class="db-link" href="${pageContext.request.contextPath}/">Home</a>
-      </div>
+      <nav class="db-nav" aria-label="Demo Bank">
+        <a href="${pageContext.request.contextPath}/">Home</a>
+        <a href="${pageContext.request.contextPath}/teller">Teller</a>
+        <a href="${pageContext.request.contextPath}/office/cards.xhtml">Back office</a>
+        <a class="db-nav-quiet" href="${pageContext.request.contextPath}/concurrency" aria-current="page">Lab</a>
+      </nav>
     </header>
 
     <main class="db-main teller-main">

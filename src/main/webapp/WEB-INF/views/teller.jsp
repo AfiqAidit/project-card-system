@@ -7,21 +7,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Teller · Demo Bank</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/demobank.css?v=16">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/teller.css?v=16">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/demobank.css?v=22">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/teller.css?v=22">
 </head>
 <body class="teller-page"<c:if test="${not empty tourAfterAction}"> data-tour-after-action="${tourAfterAction}"</c:if>>
-  <div class="db-shell">
+  <div class="db-shell db-shell-wide">
     <header class="db-topbar">
       <div>
         <p class="db-kicker">Demo Bank</p>
         <h1>Teller desk</h1>
-        <p class="db-lead muted">Fictional cards (999 prefix). You play the teller: open cards and simulate shop payments.</p>
+        <p class="db-lead muted">Fictional cards (999 prefix). Open a card, then try a shop payment.</p>
       </div>
-      <div class="db-topbar-links">
-        <a class="db-link" href="${pageContext.request.contextPath}/concurrency">Concurrency lab</a>
-        <a class="db-link" href="${pageContext.request.contextPath}/">Home</a>
-      </div>
+      <nav class="db-nav" aria-label="Demo Bank">
+        <a href="${pageContext.request.contextPath}/">Home</a>
+        <a href="${pageContext.request.contextPath}/teller" aria-current="page">Teller</a>
+        <a href="${pageContext.request.contextPath}/office/cards.xhtml">Back office</a>
+        <a class="db-nav-quiet" href="${pageContext.request.contextPath}/concurrency">Lab</a>
+      </nav>
     </header>
 
     <div id="tellerTourAnchor" class="teller-tour-anchor" aria-hidden="true"></div>
@@ -109,7 +111,12 @@
                           <c:otherwise><span class="db-badge db-badge-credit">Credit</span></c:otherwise>
                         </c:choose>
                       </td>
-                      <td><span class="db-badge db-badge-active">${c.status()}</span></td>
+                      <td>
+                        <c:choose>
+                          <c:when test="${c.status() == 'FROZEN'}"><span class="db-badge db-badge-frozen">Frozen</span></c:when>
+                          <c:otherwise><span class="db-badge db-badge-active">Active</span></c:otherwise>
+                        </c:choose>
+                      </td>
                       <td>${c.available()}</td>
                     </tr>
                   </c:forEach>
@@ -188,7 +195,7 @@
     </div>
   </div>
 
-  <script src="${pageContext.request.contextPath}/js/teller-tour.js?v=16"></script>
+  <script src="${pageContext.request.contextPath}/js/teller-tour.js?v=22"></script>
   <script>
     (function () {
       var key = "demobank.showTrace";
