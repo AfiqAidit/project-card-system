@@ -72,6 +72,8 @@ case "$cmd" in
     echo "http://localhost:8080/card-system/"
     echo "http://localhost:8080/card-system/hello"
     echo "http://localhost:8080/card-system/teller"
+    echo "http://localhost:8080/card-system/login"
+    echo "http://localhost:8080/card-system/office/cards.xhtml"
     ;;
   ""|-h|--help)
     usage

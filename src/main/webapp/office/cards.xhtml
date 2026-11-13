@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      lang="en">
+<h:head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Back office · Demo Bank</title>
+  <link rel="stylesheet" href="#{request.contextPath}/css/demobank.css?v=23"/>
+  <link rel="stylesheet" href="#{request.contextPath}/css/teller.css?v=23"/>
+</h:head>
+<h:body>
+  <div class="db-shell db-shell-wide">
+    <header class="db-topbar">
+      <div>
+        <p class="db-kicker">Demo Bank</p>
+        <h1>Back office</h1>
+        <p class="db-lead muted">Signed in as #{office.staffName}. Search, freeze, change a credit limit, or read recent purchases.</p>
+      </div>
+      <div class="db-topbar-links">
+        <nav class="db-nav" aria-label="Demo Bank">
+          <a href="#{request.contextPath}/">Home</a>
+          <a href="#{request.contextPath}/teller">Teller</a>
+          <a href="#{request.contextPath}/office/cards.xhtml" aria-current="page">Back office</a>
+          <a class="db-nav-quiet" href="#{request.contextPath}/concurrency">Lab</a>
+        </nav>
+        <form method="post" action="#{request.contextPath}/logout">
+          <button type="submit" class="db-btn db-btn-secondary db-btn-inline">Log out</button>
+        </form>
+      </div>
+    </header>
+
+    <main class="db-main">
+      <h:panelGroup layout="block" rendered="#{not empty office.flash}">
+        <p class="db-flash#{office.flashError ? ' is-error' : ''}" role="status">#{office.flash}</p>
+      </h:panelGroup>
+
+      <h:form id="officeForm">
+        <section class="panel">
+          <div class="db-panel-head">
+            <div>
+              <h2>Cards</h2>
+              <p class="muted">Amounts are MYR. Search matches the masked number, debit, credit, active, or frozen.</p>
+            </div>
+            <div class="db-row-actions">
+              <h:inputText id="query" value="#{office.query}" styleClass="db-field db-field-search"/>
+              <h:commandButton value="Search" action="#{office.search}" styleClass="db-btn db-btn-primary db-btn-inline"/>
+            </div>
+          </div>
+
+          <h:panelGroup layout="block" rendered="#{empty office.cards and empty office.query}">
+            <p class="muted">No cards yet. Open one on the teller desk, then come back.</p>
+          </h:panelGroup>
+          <h:panelGroup layout="block" rendered="#{empty office.cards and not empty office.query}">
+            <p class="muted">No cards match that search.</p>
+          </h:panelGroup>
+          <h:panelGroup layout="block" styleClass="db-table-wrap" rendered="#{not empty office.cards}">
+            <h:dataTable value="#{office.cards}" var="card" styleClass="db-table">
+              <h:column>
+                <f:facet name="header">Number</f:facet>
+                <code>#{card.maskedNumber}</code>
+              </h:column>
+              <h:column>
+                <f:facet name="header">Type</f:facet>
+                <h:panelGroup styleClass="db-badge db-badge-debit" rendered="#{card.kind == 'DEBIT'}">Debit</h:panelGroup>
+                <h:panelGroup styleClass="db-badge db-badge-credit" rendered="#{card.kind == 'CREDIT'}">Credit</h:panelGroup>
+              </h:column>
+              <h:column>
+                <f:facet name="header">Status</f:facet>
+                <h:panelGroup styleClass="db-badge #{card.status == 'FROZEN' ? 'db-badge-frozen' : 'db-badge-active'}">
+                  #{card.status == 'FROZEN' ? 'Frozen' : 'Active'}
+                </h:panelGroup>
+              </h:column>
+              <h:column>
+                <f:facet name="header">Available</f:facet>
+                #{card.available}
+              </h:column>
+              <h:column>
+                <f:facet name="header">Credit limit</f:facet>
+                <h:panelGroup rendered="#{card.kind == 'CREDIT'}" layout="span" styleClass="db-row-actions">
+                  <h:inputText value="#{office.limitDrafts[card.id]}" styleClass="db-field db-field-inline db-limit-input"/>
+                  <h:commandButton value="Save" action="#{office.changeLimit(card.id)}"
+                                   styleClass="db-btn db-btn-primary db-btn-inline db-limit-save"/>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{card.kind != 'CREDIT'}" styleClass="muted">Uses balance</h:panelGroup>
+              </h:column>
+              <h:column>
+                <f:facet name="header">Hold</f:facet>
+                <h:commandButton value="Freeze" action="#{office.freeze(card.id)}"
+                                 rendered="#{card.status == 'ACTIVE'}"
+                                 styleClass="db-btn db-btn-secondary db-btn-inline"/>
+                <h:commandButton value="Unfreeze" action="#{office.unfreeze(card.id)}"
+                                 rendered="#{card.status == 'FROZEN'}"
+                                 styleClass="db-btn db-btn-secondary db-btn-inline"/>
+              </h:column>
+            </h:dataTable>
+          </h:panelGroup>
+        </section>
+      </h:form>
+
+      <section class="panel">
+        <h2>Recent purchases</h2>
+        <p class="muted">Latest 20 shop payments, newest first. The card number is masked.</p>
+        <h:panelGroup layout="block" rendered="#{empty office.purchases}">
+          <p class="muted">No purchases yet. Try a payment on the teller desk, then come back.</p>
+        </h:panelGroup>
+        <h:panelGroup layout="block" styleClass="db-table-wrap" rendered="#{not empty office.purchases}">
+          <h:dataTable value="#{office.purchases}" var="purchase" styleClass="db-table">
+            <h:column>
+              <f:facet name="header">When</f:facet>
+              #{purchase.when}
+            </h:column>
+            <h:column>
+              <f:facet name="header">Card</f:facet>
+              <code>#{purchase.maskedNumber}</code>
+            </h:column>
+            <h:column>
+              <f:facet name="header">Amount</f:facet>
+              #{purchase.amount}
+            </h:column>
+            <h:column>
+              <f:facet name="header">Result</f:facet>
+              <h:panelGroup styleClass="db-badge db-badge-active" rendered="#{purchase.approved}">Approved</h:panelGroup>
+              <h:panelGroup styleClass="db-badge db-badge-frozen" rendered="#{not purchase.approved}">Declined</h:panelGroup>
+            </h:column>
+            <h:column>
+              <f:facet name="header">Reason</f:facet>
+              <h:panelGroup rendered="#{not empty purchase.reason}">#{purchase.reason}</h:panelGroup>
+              <h:panelGroup rendered="#{empty purchase.reason}" styleClass="muted">-</h:panelGroup>
+            </h:column>
+          </h:dataTable>
+        </h:panelGroup>
+      </section>
+
+      <section class="panel trace-panel">
+        <h2>What happened</h2>
+        <h:panelGroup layout="block" rendered="#{empty office.traceSteps}">
+          <p class="muted">No steps recorded for this request.</p>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{not empty office.traceSteps}">
+          <ol class="trace-list">
+            <ui:repeat value="#{office.traceSteps}" var="step">
+              <li>
+                <span class="trace-layer trace-layer-#{step.layer}">#{step.layer}</span>
+                <strong>#{step.title}</strong>
+                <span class="trace-detail">#{step.detail}</span>
+              </li>
+            </ui:repeat>
+          </ol>
+        </h:panelGroup>
+      </section>
+    </main>
+
+    <p class="db-footnote">Demo only · fictional data · card numbers use prefix 999</p>
+  </div>
+  <script>
+    document.querySelectorAll(".db-limit-input").forEach(function (input) {
+      input.addEventListener("keydown", function (event) {
+        if (event.key !== "Enter") {
+          return;
+        }
+        event.preventDefault();
+        var row = input.closest(".db-row-actions");
+        var save = row ? row.querySelector(".db-limit-save") : null;
+        if (save) {
+          save.click();
+        }
+      });
+    });
+  </script>
+</h:body>
+</html>
