@@ -4,11 +4,16 @@ A fictional bank card application built with **Java 21**, **Jakarta EE 10**, and
 
 Full plan and context: **`docs/CARD-SYSTEM-SPEC.md`** in this repo. For AI assistants, read **`AGENTS.md`** first.
 
-## Phase 2 (current)
+## Phase 4 (current)
 
-- **Teller desk:** http://localhost:8080/card-system/teller (issue debit/credit, test purchase)
-- **Database:** H2 file DB via WildFly datasource (see `docs/DATABASE.md`)
+Phases 0 to 3 are in place: hello servlet, card classes, teller desk with a request trace, authorization EJB, and the concurrency lab.
+
+- **Teller desk:** http://localhost:8080/card-system/teller
+- **Back office:** http://localhost:8080/card-system/office/cards.xhtml (staff login `staff` / `demo`)
+- **Database:** H2 file at `~/.demobank/` (see `docs/DATABASE.md`)
 - Phase 0 hello servlet still at `/hello`
+
+The back office also lists recent purchases (approved and declined). Login, the card list, freeze, credit limit, and that history are the Phase 4 slice in the app now.
 
 ## Prerequisites on your Mac
 

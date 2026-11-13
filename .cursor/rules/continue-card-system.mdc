@@ -1,0 +1,159 @@
+---
+description: Continue Demo Bank from the 13 Nov 2026 handoff. Read this before changing the card system.
+alwaysApply: true
+---
+
+# Continue Demo Bank (card-system)
+
+This rule is the memory of the build chat. The owner will open **this folder** (`~/Documents/Selangkah/card-system`) in its own Cursor window and continue here. Do not do this work inside the portfolio repo.
+
+When he says "continue", "where we left off", or "tomorrow": follow **Next session** below. Do not rebuild Phases 0 to 4. Do not redo login, back office, or purchase history unless something is broken.
+
+## Who and how to talk
+
+- Owner: Muhammad Afiq Aidit ("Afiq"). Software engineer in Hulu Langat, Selangor. New to Java EE. He knows Java 21, Spring Boot, Laravel, NestJS, Next.js.
+- Explain in plain English, one idea at a time. Compare a new term to Spring Boot or Laravel the first time, then move on. Define a term once.
+- Each step should end with something he can open in the browser.
+- He forgets context between days. This file is the source of truth for "where we left off". Deeper product plan stays in `docs/CARD-SYSTEM-SPEC.md`. Run steps stay in `README.md`.
+- No em dashes or en dashes in code, comments, UI, docs, or replies about this project. Use a hyphen, a colon, or a full stop.
+
+## What this app is
+
+Fictional **Demo Bank** card system. Portfolio piece inspired by his Finexus internship (card management). It is also a Java EE tutorial: **Show what's happening** records the real steps of a request.
+
+NDA hard rules:
+
+- Fictional only. Card numbers use prefix `999` and pass Luhn. Mask on screen as `9999 .... .... 1234` style (see `CardNumber`).
+- Never copy Finexus or CARDWORKS names, screens, flows, table names, or wording.
+- The trace must be **real** (`RequestTrace` filled during the request). Never put passwords, full card numbers, keys, or session ids in a trace step.
+- Demo login is public on purpose: username `staff`, password `demo`.
+
+Long-term phases (do not jump ahead):
+
+| Phase | State on 13 Nov 2026 |
+|---|---|
+| 0 Hello servlet | Done, committed |
+| 1 Domain + unit tests | Done, committed |
+| 2 Teller + H2 + trace | Done, committed |
+| 3 Authorization EJB, concurrency lab, `@Version` | Done, committed `7636564` (9 Oct 2026). Already pushed. Do not amend. That commit has a `Co-authored-by: Cursor` trailer. Leave it. |
+| 4 Staff login + JSF back office + purchase history | **In the working tree, not committed.** Login, search, freeze, unfreeze, credit limit, shared nav, purchase history on `office/cards.xhtml`. Verified in the browser on 13 Nov 2026. |
+| 5 Learn pages | Not started. This is the next feature if he asks to continue. |
+| 6 REST + SOAP | Not started |
+| 7 Encrypt card numbers + Jasper PDF | Not started |
+| 8 Rest of Learn pages | Not started |
+| 9 Oracle Cloud deploy | Not started. Local DB is H2, not Oracle. |
+
+The October "2-day sprint" in the spec is over. He is continuing part-time. Do not rush deploy or the portfolio card unless he asks.
+
+## Next session (do this first)
+
+1. Read this rule. Skim `README.md` only if the run commands are needed.
+2. Phase 4 (login, back office, purchase history, shared nav) is written and was click-tested on 13 Nov 2026. Do not regenerate it. Do not put `body` or `.panel` resets back into `teller.css`.
+3. When 8080 is free, start and deploy:
+
+```bash
+export JAVA_HOME=$(/usr/libexec/java_home -v 21)
+export JBOSS_HOME=/opt/homebrew/opt/wildfly-as/libexec
+./scripts/start-wildfly.sh
+```
+
+Second terminal, from this repo:
+
+```bash
+export JAVA_HOME=$(/usr/libexec/java_home -v 21)
+export JBOSS_HOME=/opt/homebrew/opt/wildfly-as/libexec
+./scripts/dev.sh deploy
+```
+
+Do **not** use `brew services start wildfly-as`. Homebrew's script picks JDK 27 and JPA deploy fails. `./scripts/start-wildfly.sh` forces Java 21.
+
+4. Quick smoke if needed: home, teller purchase, login `staff` / `demo`, back office recent purchases, freeze, wrong password (trace must not contain the password).
+5. `mvn test` passed on 13 Nov 2026 (9 tests). Re-run after any code change: `export JAVA_HOME=$(/usr/libexec/java_home -v 21)` then `mvn test`.
+6. Next feature is **Phase 5 Learn pages**, only if he asks. Do not start Learn pages, REST, SOAP, encryption, PDF, Oracle, or the portfolio card unless he asks.
+7. Commit only if he asks. Short message, author Afiq only. If a `Co-authored-by` trailer appears, remove it before pushing. Do not push unless he asks.
+
+## Purchase history (done)
+
+- Entity `AuthorizationEvent` (`authorization_events`): id, card id, amount, approved, decline reason, created at. Registered in `persistence.xml`.
+- `AuthorizationService.authorize` inserts the event in the same transaction as the card update, after the card is found. Missing card: no row. Optimistic lock rollback rolls the event back too.
+- `AuthorizationService.recentPurchases()` returns the latest 20 rows for the back office, with masked numbers only.
+- `office/cards.xhtml` shows When, Card, Amount, Result, Reason. Trace records the insert on teller purchases and the select on the back office page.
+- `CardService.deleteAllCards()` also deletes authorization events (nightly demo reset).
+
+## Login decision (do not "fix" this)
+
+The spec's Phase 4 line says "Jakarta Security". This slice uses a **servlet, a filter, and an HTTP session** instead, so the trace can record the real steps (the spec's own login example: filter, servlet, hash check, session cookie).
+
+- `StaffPassword` stores only the SHA-256 of `demo` (`2a97516c354b68848cdbd8f54a226a0a55b21ed138e207ad6c5cbb9c00aa5aea`). Compare with `MessageDigest.isEqual`. The plain password lives in `StaffSession.DEMO_PASSWORD` for the pages that show the demo account.
+- `StaffGateFilter` (`/*`): paths `/office` and `/office/*` need session attribute `demobank.staffUser`. Missing session redirects to `/login`. For those paths it calls `RequestTrace.start()`. For every other path it sets request attribute `demobank.gateNote` and does **not** start the trace (the servlet starts it).
+- `LoginServlet` `POST /login` starts the trace, reads the gate note, checks the hash, calls `changeSessionId()`, stores the user, saves the finished step list on the session as `demobank.loginTrace`, redirects to `/office/cards.xhtml`.
+- `OfficeBean.getTraceSteps()` prepends that login list **once**, then removes it, then appends `RequestTrace.finish()`. It caches the list. Calling finish twice yields an empty second list.
+- `LogoutServlet` is `POST /logout` only.
+- Teller, concurrency, home, hello, css, and js stay public.
+
+Do not replace this with container form login unless he asks. A later Learn page can contrast session login with Jakarta Security.
+
+## How the trace works
+
+`com.demobank.trace.RequestTrace` is a `ThreadLocal` list: `start`, `add(layer, title, detail)`, `finish`.
+
+- Teller: `TellerServlet` starts it, JSP reads `traceSteps`.
+- Login POST: `LoginServlet` starts it.
+- Back office: the filter starts it. `OfficeBean` finishes it at render time. The trace panel is **last** on `cards.xhtml` so card queries are recorded before `finish()`.
+- `JpaSupport.inTransaction` adds Begin transaction, Commit, or Rollback. It also calls `SchemaPatches.applyIfNeeded`.
+- Layers already styled in `teller.css`: Browser, Filter, Servlet, JSF, EJB, Domain, JPA. New layers need a `.trace-layer-Name` class or they look plain.
+- `add` does nothing if `start` was not called. Office actions must run on a request the filter already started.
+
+## Code map
+
+Package `com.demobank`.
+
+| Package | Role |
+|---|---|
+| `domain` | Rules only. No JPA. `Card` has no setters for balance or status. `authorize`, `freeze`, `unfreeze`. `CreditCard.changeLimit` only. `DebitCard` spends `balance`. `CreditCard` spends against `creditLimit` and tracks `amountUsed`. `Money` is `BigDecimal`, scale at most 2, never negative, never `double`. |
+| `persistence` | `CardEntity` (`cards` table, `@Version`), `AuthorizationEvent` (`authorization_events`), `CardMapper.toDomain` / `applyDomainState` (also writes credit limit), `JpaSupport`, `SchemaBootstrap` (`@Singleton @Startup`), `SchemaPatches`. |
+| `service` | `CardService`: issue, `listCards`, `search`, `freeze`, `unfreeze`, `changeCreditLimit`, `deleteAllCards` (also clears events). `AuthorizationService`: pay, event insert, `recentPurchases`, async retry for the lab. `ConcurrencyService`, `UnsafeCardWriter`, `DemoDataResetTimer`. All EJBs use `@TransactionManagement(BEAN)` and `JpaSupport`, not container transactions. `@PersistenceUnit(unitName = "DemoBankPU")`. |
+| `web` | Servlets plus `OfficeBean`, `CardSummary`, `PurchaseSummary`. |
+| `trace` | `RequestTrace`, `TraceStep` (`getLayer`, `getTitle`, `getDetail`). |
+
+UI:
+
+- JSP: `src/main/webapp/WEB-INF/views/` (`teller.jsp`, `concurrency.jsp`, `login.jsp`). Home is `src/main/webapp/index.jsp`.
+- JSF: `src/main/webapp/office/cards.xhtml`. `WEB-INF/faces-config.xml` version 4.0 turns on Faces for `*.xhtml`. Bean is `@Named("office")` `@RequestScoped`. `beans.xml` is `bean-discovery-mode="all"`.
+- CSS: `css/demobank.css` (shared chrome: `db-shell`, `db-topbar`, `panel`, `db-btn`, `db-table`, `db-flash`) and `css/teller.css` (trace). Bump the `?v=` on the link when CSS changes. No new hex colours inside JSP if a token in `demobank.css` already fits.
+- EL on records: `CardSummary` is a record. Facelets uses `#{card.maskedNumber}` (property), not `getMaskedNumber`. Action methods take `String` ids because the page passes `#{card.id}`.
+- Credit limit field: `#{office.limitDrafts[card.id]}`. The map is `Map<Object, String>` because EL may use a `UUID` as the key. `draftLimit` matches both the string and `toString()` of the key.
+
+Database: H2 file `jdbc:h2:file:${user.home}/.demobank/demobank`, user `sa`, password `sa`. Not a WildFly datasource. See `docs/DATABASE.md`.
+
+## Files touched (uncommitted as of 13 Nov 2026)
+
+Modified: `README.md`, `AGENTS.md`, `docs/DESIGN.md`, `scripts/dev.sh`, `Card.java`, `CreditCard.java`, `CardMapper.java`, `CardService.java`, `AuthorizationService.java`, `CardSummary.java`, `persistence.xml`, `teller.jsp`, `concurrency.jsp`, `demobank.css`, `teller.css`, `index.jsp`, `CardAuthorizationTest.java`.
+
+New: `AuthorizationEvent`, `PurchaseSummary`, `LoginServlet`, `LogoutServlet`, `OfficeBean`, `StaffGateFilter`, `StaffPassword`, `StaffSession`, `WEB-INF/faces-config.xml`, `WEB-INF/views/login.jsp`, `office/cards.xhtml`, `.cursor/rules/continue-card-system.mdc`.
+
+`README.md` top section says Phase 4 includes purchase history. `scripts/dev.sh urls` includes `/login` and `/office/cards.xhtml`.
+
+Git: `main` tracks `origin` (`git@github.com:AfiqAidit/project-card-system.git`). Remote name in the spec (`AfiqAidit/card-system`) is stale. Use the remote that is already configured.
+
+## Domain rules the back office must keep
+
+- Freeze and unfreeze go through `Card.freeze()` / `unfreeze()`, then `CardMapper.applyDomainState`. A frozen card declines in `authorize` with `DeclineReason.CARD_FROZEN`.
+- `changeCreditLimit` only on `CreditCard`. `changeLimit` throws if the new limit is below `amountUsed`. `Money.of` throws if the amount is negative or has more than 2 decimal places. `OfficeBean` catches that and sets `flash` / `flashError`.
+- Search filters in memory on masked number, kind, and status, after `listCards()`. Empty query returns every card.
+
+## Tests
+
+`src/test/java/com/demobank/domain/`. No container tests. `CardAuthorizationTest.credit_changeLimitRejectsBelowAmountUsed` covers the new limit rule. Add a domain test when a new rule is added. Do not need a WildFly test for the JSF page.
+
+## Portfolio (separate repo)
+
+`~/Documents/Selangkah/Portfolio`. Do not edit it while working here unless he asks.
+
+Not done yet: an entry in `src/content/side-projects.ts` with `id: "card-system"`, `inspiredBy: "Finexus"`, `status: "in-progress"`, GitHub link `https://github.com/AfiqAidit/project-card-system`. No live call from the home page. Screenshot later, under `public/projects/`.
+
+## Docs to open only when needed
+
+- `docs/CARD-SYSTEM-SPEC.md`: full phases, glossary, job target, hosting. Some Phase 4 wording still says Jakarta Security and JSF for the whole back office. **This rule wins** for what is actually built.
+- `docs/DESIGN.md`: OOP. `docs/DATABASE.md`: H2 file. `docs/SETUP-MAC.md`: JDK and `JBOSS_HOME`.
+- `AGENTS.md`: short pointer. This rule is the continuation brief.

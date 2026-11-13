@@ -2,9 +2,10 @@
 
 Read these first, in order:
 
-1. **`docs/CARD-SYSTEM-SPEC.md`** - full product context, job target, glossary, phases, "Show what's happening" design, hard rules
-2. **`README.md`** - build, run WildFly, deploy
-3. **`docs/SETUP-MAC.md`** - Mac paths and `JAVA_HOME` / `JBOSS_HOME`
+1. **`.cursor/rules/continue-card-system.mdc`** - where the build stopped (13 Nov 2026), what is uncommitted, and what to do next. This wins if it disagrees with the spec.
+2. **`docs/CARD-SYSTEM-SPEC.md`** - full product context, job target, glossary, phases, "Show what's happening" design, hard rules
+3. **`README.md`** - build, run WildFly, deploy
+4. **`docs/SETUP-MAC.md`** - Mac paths and `JAVA_HOME` / `JBOSS_HOME`
 
 ## Owner
 
