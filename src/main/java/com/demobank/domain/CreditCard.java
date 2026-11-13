@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public final class CreditCard extends Card {
 
-  private final Money creditLimit;
+  private Money creditLimit;
   private Money amountUsed;
 
   public CreditCard(CardNumber number, Money creditLimit) {
@@ -22,6 +22,14 @@ public final class CreditCard extends Card {
   public void restoreState(CardStatus status, Money used) {
     restoreStatus(status);
     this.amountUsed = used;
+  }
+
+  /** Staff can raise or lower the limit. It cannot drop below what is already spent. */
+  public void changeLimit(Money newLimit) {
+    if (amountUsed.isGreaterThan(newLimit)) {
+      throw new IllegalArgumentException("Limit cannot be below the amount already used");
+    }
+    this.creditLimit = newLimit;
   }
 
   @Override

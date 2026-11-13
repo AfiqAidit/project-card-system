@@ -2,6 +2,7 @@ package com.demobank.domain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
@@ -35,6 +36,15 @@ class CardAuthorizationTest {
     AuthorizationResult r = card.authorize(Money.of(new BigDecimal("301.00")));
     assertFalse(r.success());
     assertEquals(DeclineReason.OVER_CREDIT_LIMIT, r.declineReason());
+  }
+
+  @Test
+  void credit_changeLimitRejectsBelowAmountUsed() {
+    CreditCard card = new CreditCard(NUMBER, Money.of(new BigDecimal("500.00")));
+    assertTrue(card.authorize(Money.of(new BigDecimal("200.00"))).success());
+    assertThrows(IllegalArgumentException.class, () -> card.changeLimit(Money.of(new BigDecimal("100.00"))));
+    card.changeLimit(Money.of(new BigDecimal("250.00")));
+    assertEquals(new BigDecimal("50.00"), card.availableToSpend().amount());
   }
 
   @Test

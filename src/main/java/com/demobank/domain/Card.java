@@ -5,6 +5,7 @@ import java.util.UUID;
 
 /**
  * Base card: state changes only through authorize, freeze, and unfreeze (encapsulation).
+ * Credit cards also expose changeLimit.
  * Subclasses implement debit vs credit spending rules (polymorphism).
  */
 public abstract class Card {

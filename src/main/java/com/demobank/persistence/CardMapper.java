@@ -38,6 +38,7 @@ public final class CardMapper {
     if (card instanceof DebitCard debit) {
       entity.setDebitBalance(debit.balance().amount());
     } else if (card instanceof CreditCard credit) {
+      entity.setCreditLimit(credit.creditLimit().amount());
       entity.setCreditUsed(credit.amountUsed().amount());
     }
   }
